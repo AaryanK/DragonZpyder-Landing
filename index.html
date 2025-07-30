@@ -1,43 +1,63 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DragonZpyder Industries</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+      body::before {
+        content: "";
+        background-image: url('logo.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 60%;
+        opacity: 0.05;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+    </style>
   </head>
-  <body class="bg-black text-white flex items-center justify-center min-h-screen flex-col p-8 text-center">
-    
-    <!-- Title -->
-    <h1 class="text-5xl font-extrabold mb-4 leading-tight">
-      Welcome to <span class="text-gray-300">DragonZpyder Industries</span>
-    </h1>
+  <body class="bg-[#1a1a1a] text-[#ffbb33] flex items-center justify-center min-h-screen flex-col p-8 text-center relative overflow-hidden">
 
-    <!-- Tagline -->
-    <p class="text-xl text-gray-400 max-w-2xl mb-10">
-      Where technology meets vision. From intelligent systems to next-gen automation, we build tools that empower.
-    </p>
+```
+<!-- Title -->
+<h1 class="text-6xl font-extrabold mb-4 leading-tight tracking-tight z-10">
+  Welcome to <span class="text-[#ffa733]">DragonZpyder Industries</span>
+</h1>
 
-    <!-- Buttons -->
-    <div class="flex flex-wrap justify-center gap-4 mb-12">
-      <a href="https://github.com/AaryanK" class="px-6 py-3 border border-white rounded-2xl hover:bg-white hover:text-black transition-all">
-        GitHub
-      </a>
-      <a href="https://www.youtube.com/@AaryanK" class="px-6 py-3 border border-white rounded-2xl hover:bg-white hover:text-black transition-all">
-        YouTube
-      </a>
-      <a href="mailto:aaryan@dragonzpyder.xyz" class="px-6 py-3 border border-white rounded-2xl hover:bg-white hover:text-black transition-all">
-        Contact Me
-      </a>
-    </div>
+<!-- Tagline -->
+<p class="text-xl text-[#ffcc88] max-w-2xl mb-10 z-10">
+  Building tools that think with you — intelligent, fast, and personal.
+</p>
 
-    <!-- Footer -->
-    <footer class="text-sm text-gray-600">
-      &copy; <span id="year"></span> DragonZpyder Industries. All rights reserved.
-    </footer>
+<!-- Info Section -->
+<section class="max-w-3xl z-10">
+  <h2 class="text-2xl font-bold mb-2 text-[#ffa733]">What We’re Working On</h2>
+  <ul class="text-[#ffcc88] space-y-2 text-left">
+    <li>• AI agents that streamline work, search, and productivity</li>
+    <li>• A smart operating system built from the ground up</li>
+    <li>• Cloud-based compute you can plug into, anytime</li>
+    <li>• Interfaces that adapt to you, not the other way around</li>
+    <li>• A crawler API for turning the web into structured knowledge</li>
+  </ul>
+</section>
 
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
+<!-- Footer -->
+<footer class="text-sm text-[#ffaa55] mt-12 z-10">
+  &copy; <span id="year"></span> DragonZpyder Industries. All rights reserved.
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+```
+
   </body>
 </html>
