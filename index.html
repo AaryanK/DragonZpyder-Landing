@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DragonZpyder Industries</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png" />
     <style>
       body::before {
         content: "";
@@ -14,7 +13,7 @@
         background-repeat: no-repeat;
         background-position: center;
         background-size: 60%;
-        opacity: 0.05;
+        opacity: 0.04;
         position: absolute;
         top: 0;
         left: 0;
@@ -22,64 +21,64 @@
         height: 100%;
         z-index: 0;
       }
+      html {
+        scroll-behavior: smooth;
+      }
     </style>
   </head>
-  <body>
+  <body class="bg-[#0f0f0f] text-[#00ffd0] min-h-screen relative overflow-x-hidden">
 
+    <!-- Hero Section -->
+    <section class="flex flex-col justify-center items-center text-center py-24 px-6 relative z-10">
+      <h1 class="text-7xl font-black tracking-tight mb-6 bg-gradient-to-br from-[#00ffd0] to-[#00ffa0] text-transparent bg-clip-text">
+        DragonZpyder Industries
+      </h1>
+      <p class="text-xl text-[#b2fff3] max-w-2xl mb-10">
+        Building tools that think with you — intelligent, fast, and personal.
+      </p>
+      <a href="#features" class="px-6 py-3 border-2 border-[#00ffa0] text-[#00ffa0] rounded-full text-lg font-semibold hover:bg-[#00ffa0]/10 transition">
+        Explore Features ↓
+      </a>
+    </section>
 
-<!-- Hero Section -->
-<section class="flex flex-col justify-center items-center text-center py-24 px-6 relative z-10">
-  <h1 class="text-7xl font-black tracking-tight mb-6 bg-gradient-to-br from-[#00ffd0] to-[#00ffa0] text-transparent bg-clip-text">
-    DragonZpyder Industries
-  </h1>
-  <p class="text-xl text-[#b2fff3] max-w-2xl mb-10">
-    Building tools that think with you — intelligent, fast, and personal.
-  </p>
-  <a href="#features" class="px-6 py-3 border-2 border-[#00ffa0] text-[#00ffa0] rounded-full text-lg font-semibold hover:bg-[#00ffa0]/10 transition">
-    Explore Features ↓
-  </a>
-</section>
+    <!-- Feature Cards -->
+    <section id="features" class="max-w-6xl mx-auto px-6 pb-24 z-10 relative">
+      <h2 class="text-4xl font-extrabold mb-12 text-center text-[#00ffa0]">What We’re Working On</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
+          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">⚙️ AI Agents</h3>
+          <p class="text-[#b2fff3]">Smart, goal-driven agents designed to streamline everyday and technical tasks effortlessly.</p>
+        </div>
+        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
+          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🖥️ Smart OS</h3>
+          <p class="text-[#b2fff3]">Reimagining operating systems for seamless interaction, personalization, and intelligence integration.</p>
+        </div>
+        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
+          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">☁️ Cloud Compute</h3>
+          <p class="text-[#b2fff3]">Decentralized, modular compute nodes ready to plug into any workload on demand.</p>
+        </div>
+        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
+          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🧠 Adaptive Interfaces</h3>
+          <p class="text-[#b2fff3]">Interfaces that learn and evolve with user preferences and behavior to deliver tailored interactions.</p>
+        </div>
+        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
+          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🌐 Crawler API</h3>
+          <p class="text-[#b2fff3]">Transforming websites into structured, prompt-ready knowledge blocks for AI to parse and use.</p>
+        </div>
+        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
+          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🛰️ Deployment Engine</h3>
+          <p class="text-[#b2fff3]">Launch apps, models, and services in real time across our stack without overhead.</p>
+        </div>
+      </div>
+    </section>
 
-<!-- Feature Cards -->
-<section id="features" class="max-w-6xl mx-auto px-6 pb-24 z-10 relative">
-  <h2 class="text-4xl font-extrabold mb-12 text-center text-[#00ffa0]">What We’re Working On</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-    <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-      <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">⚙️ AI Agents</h3>
-      <p class="text-[#b2fff3]">Smart, goal-driven agents designed to streamline everyday and technical tasks effortlessly.</p>
-    </div>
-    <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-      <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🖥️ Smart OS</h3>
-      <p class="text-[#b2fff3]">Reimagining operating systems for seamless interaction, personalization, and intelligence integration.</p>
-    </div>
-    <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-      <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">☁️ Cloud Compute</h3>
-      <p class="text-[#b2fff3]">Decentralized, modular compute nodes ready to plug into any workload on demand.</p>
-    </div>
-    <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-      <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🧠 Adaptive Interfaces</h3>
-      <p class="text-[#b2fff3]">Interfaces that learn and evolve with user preferences and behavior to deliver tailored interactions.</p>
-    </div>
-    <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-      <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🌐 Crawler API</h3>
-      <p class="text-[#b2fff3]">Transforming websites into structured, prompt-ready knowledge blocks for AI to parse and use.</p>
-    </div>
-    <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-      <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🛰️ Deployment Engine</h3>
-      <p class="text-[#b2fff3]">Launch apps, models, and services in real time across our stack without overhead.</p>
-    </div>
-  </div>
-</section>
+    <!-- Footer -->
+    <footer class="text-sm text-[#00e0b0] mt-20 text-center pb-8 z-10 relative">
+      &copy; <span id="year"></span> DragonZpyder Industries. All rights reserved.
+    </footer>
 
-<!-- Footer -->
-<footer class="text-sm text-[#00e0b0] mt-20 text-center pb-8 z-10 relative">
-  &copy; <span id="year"></span> DragonZpyder Industries. All rights reserved.
-</footer>
-
-<script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-
-
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
