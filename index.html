@@ -1,84 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DragonZpyder Industries</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <style>
-      body::before {
-        content: "";
-        background-image: url('logo.png');
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 60%;
-        opacity: 0.04;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-      }
-      html {
-        scroll-behavior: smooth;
-      }
-    </style>
-  </head>
-  <body class="bg-[#0f0f0f] text-[#00ffd0] min-h-screen relative overflow-x-hidden">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DragonZpyder Industries</title>
+  <meta name="description" content="DragonZpyder builds sovereign, neon-fast AI systems for industry and research.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* THEME */
+    :root{
+      --bg:#070b0a;           /* almost-black */
+      --bg-2:#0a1210;         /* deeper */
+      --card:#0d1411;         /* deep greenish */
+      --border:#0f1f18;       /* subtle border */
+      --text:#e8fdf0;         /* soft mint */
+      --muted:#a4e6c0;        /* desaturated mint */
+      --accent1:#00ff85;      /* neon green */
+      --accent2:#e4ff57;      /* neon yellow */
+      --accent3:#46ffd2;      /* aqua */
+      --shadow:0 10px 40px rgba(0,255,133,.12),0 4px 16px rgba(228,255,87,.08);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text); font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif; letter-spacing:.01em; line-height:1.6;
+      background: radial-gradient(1200px 600px at 75% -10%, rgba(0,255,133,.10), transparent 55%),
+                  radial-gradient(900px 480px at 10% 0%, rgba(228,255,87,.08), transparent 50%),
+                  linear-gradient(180deg, #050806, var(--bg-2) 60%, #050806);
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1200px; margin:0 auto; padding:0 24px}
 
-    <!-- Hero Section -->
-    <section class="flex flex-col justify-center items-center text-center py-24 px-6 relative z-10">
-      <h1 class="text-7xl font-black tracking-tight mb-6 bg-gradient-to-br from-[#00ffd0] to-[#00ffa0] text-transparent bg-clip-text">
-        DragonZpyder Industries
-      </h1>
-      <p class="text-xl text-[#b2fff3] max-w-2xl mb-10">
-        Building tools that think with you — intelligent, fast, and personal.
-      </p>
-      <a href="#features" class="px-6 py-3 border-2 border-[#00ffa0] text-[#00ffa0] rounded-full text-lg font-semibold hover:bg-[#00ffa0]/10 transition">
-        Explore Features ↓
+    /* BACKGROUND FX */
+    .aurora{position:fixed; inset:-10% -10% auto -10%; height:70vh; pointer-events:none; z-index:-1; filter:blur(36px) saturate(140%); opacity:.65; background: conic-gradient(from 210deg, rgba(0,255,133,.12), rgba(228,255,87,.10), rgba(70,255,210,.10), rgba(0,255,133,.12)); animation:spin 16s linear infinite}
+    .grid-dots{position:fixed; inset:0; pointer-events:none; z-index:-2; background: radial-gradient(circle at 1px 1px, rgba(0,255,133,.06) 1px, transparent 1px) 0 0/22px 22px, linear-gradient(180deg, transparent, rgba(0,0,0,.35));}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* NAVBAR */
+    .nav{position:sticky; top:0; z-index:1000; backdrop-filter:saturate(180%) blur(14px); background:rgba(6,12,10,.55); border-bottom:1px solid var(--border)}
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; height:72px}
+    .logo{display:flex; align-items:center; gap:12px; font-weight:800}
+    .logo-title{font-family:"Space Grotesk", Inter, sans-serif; letter-spacing:.5px}
+    .nav-links{display:flex; gap:22px}
+    .nav-links a{opacity:.85}
+    .nav-links a:hover{opacity:1}
+    .btn{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--accent1); padding:10px 16px; border-radius:14px; font-weight:600; background:linear-gradient(180deg, rgba(0,255,133,.12), rgba(0,0,0,.12)); box-shadow:var(--shadow); transition: transform .15s ease}
+    .btn:hover{transform:translateY(-1px)}
+
+    /* HERO */
+    .hero{padding:110px 0 48px; position:relative; overflow:hidden}
+    .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:42px; align-items:center}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr; gap:28px} .hero{padding:76px 0 24px}}
+    .eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); background:rgba(0,255,133,.08); border:1px solid rgba(0,255,133,.35); padding:8px 12px; border-radius:999px}
+    .title{font-family:"Space Grotesk", Inter, sans-serif; font-weight:900; font-size:clamp(38px, 6vw, 64px); line-height:1.05; margin:16px 0 14px}
+    .title .pulse{position:relative}
+    .title .pulse::after{content:""; position:absolute; inset:-4px -2px; border-radius:12px; background:radial-gradient(closest-side, rgba(0,255,133,.18), transparent); filter:blur(10px); animation:pulse 2.4s ease-in-out infinite; z-index:-1}
+    @keyframes pulse{50%{opacity:.4; transform:scale(1.02)}}
+    .subtitle{font-size:18px; color:#c6f5dc; opacity:.9; max-width:60ch}
+    .cta{display:flex; gap:12px; margin-top:28px; flex-wrap:wrap}
+    .cta .primary{border-color:var(--accent2); background:linear-gradient(180deg, rgba(228,255,87,.18), rgba(0,0,0,.08))}
+
+    /* TERMINAL */
+    .terminal{background:linear-gradient(180deg, #07110d 0%, #0a1813 100%); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; overflow:hidden; position:relative; transform-style:preserve-3d}
+    .term-top{display:flex; align-items:center; gap:6px; height:28px}
+    .dot{width:10px; height:10px; border-radius:999px; background:#1d3028; box-shadow:0 0 12px rgba(0,255,133,.25) inset}
+    .screen{margin-top:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:14px; color:#d8ffe9; min-height:160px}
+    .prompt{color:#79ffbf}
+    .caret{display:inline-block; width:8px; height:16px; background:var(--accent1); animation:blink 1s steps(1,end) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* CARDS / TILES */
+    .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:24px}
+    @media (max-width:980px){.pillars{grid-template-columns:1fr}}
+    .card{position:relative; background:linear-gradient(180deg, #08140f 0%, #0b1612 100%); border:1px solid var(--border); border-radius:18px; padding:18px; transition:transform .25s ease, border-color .25s ease}
+    .card:hover{transform:translateY(-2px); border-color:rgba(0,255,133,.35)}
+    .card::before{content:""; position:absolute; inset:-1px; border-radius:18px; background:linear-gradient(120deg, rgba(0,255,133,.18), rgba(70,255,210,.1), rgba(228,255,87,.16)); opacity:.0; transition:opacity .3s ease}
+    .card:hover::before{opacity:.6}
+    .card h3{margin:6px 0 6px; font-family:"Space Grotesk"}
+    .badge{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(0,255,133,.4); background:rgba(0,255,133,.08); color:#c6ffd9}
+
+    section{padding:72px 0}
+    .section-title{font-family:"Space Grotesk"; font-size:32px; margin:0 0 12px}
+    .section-sub{color:#b9f0d0; margin:0 0 24px}
+    .showcase{display:grid; grid-template-columns:repeat(12,1fr); gap:18px}
+    .tile{grid-column:span 4; position:relative; background:linear-gradient(140deg, rgba(0,255,133,.10), rgba(0,0,0,.0)); border:1px solid var(--border); border-radius:18px; padding:18px; overflow:hidden}
+    .tile.big{grid-column:span 8}
+    .tile::after{content:""; position:absolute; inset:0; background:radial-gradient(650px 180px at 10% 0%, rgba(0,255,133,.08), transparent), radial-gradient(650px 180px at 90% 100%, rgba(228,255,87,.06), transparent); opacity:.65; pointer-events:none}
+    @media (max-width:1024px){.tile{grid-column:span 12}}
+    .kpi{font-size:32px; font-weight:800; font-family:"Space Grotesk"}
+
+    .logos{display:flex; flex-wrap:wrap; gap:18px; opacity:.8}
+    .logo-pill{border:1px dashed var(--border); padding:12px 16px; border-radius:999px}
+
+    footer{border-top:1px solid var(--border); padding:28px 0 42px; color:#c9f5de}
+    .foot{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px}
+    .foot small{opacity:.9}
+
+    .hide-sm{display:inline-block}
+    @media (max-width:640px){.hide-sm{display:none}}
+
+    /* MICRO-INTERACTIONS */
+    .tilt{transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0)) translateZ(0)}
+    .tilt:hover{will-change:transform}
+    .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+    .reveal.show{opacity:1; transform:translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="grid-dots" aria-hidden="true"></div>
+
+  <!-- NAVBAR -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a class="logo" href="#top">
+        <img src="logo.png" alt="DragonZpyder Industries Logo" style="width:36px; height:36px; border-radius:12px; box-shadow:0 0 20px rgba(0,255,133,.35)">
+        <span class="logo-title">DragonZpyder Industries</span>
       </a>
-    </section>
+      <div class="nav-links hide-sm">
+        <a href="#pillars">Stack</a>
+        <a href="#showcase">Showcase</a>
+        <a href="#updates">Status</a>
+        <a href="#contact">Contact</a>
+        <a class="btn" href="#get-started">Coming Soon</a>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Feature Cards -->
-    <section id="features" class="max-w-6xl mx-auto px-6 pb-24 z-10 relative">
-      <h2 class="text-4xl font-extrabold mb-12 text-center text-[#00ffa0]">What We’re Working On</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">⚙️ AI Agents</h3>
-          <p class="text-[#b2fff3]">Smart, goal-driven agents designed to streamline everyday and technical tasks effortlessly.</p>
+  <!-- HERO -->
+  <header id="top" class="hero">
+    <div class="container grid">
+      <div class="reveal">
+        <span class="eyebrow">Sovereign • Fast • Neon‑Precise</span>
+        <h1 class="title">Building things that <span class="pulse" style="background:linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent">think with you</span>.</h1>
+        <p class="subtitle">We’re quietly assembling a sovereign AI stack. A few hints below — full reveal soon.</p>
+        <div class="cta">
+          <a class="btn primary" href="#get-started">Join the Waitlist</a>
+          <a class="btn" href="#showcase">See What It Can Do</a>
         </div>
-        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🖥️ Smart OS</h3>
-          <p class="text-[#b2fff3]">Reimagining operating systems for seamless interaction, personalization, and intelligence integration.</p>
-        </div>
-        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">☁️ Cloud Compute</h3>
-          <p class="text-[#b2fff3]">Decentralized, modular compute nodes ready to plug into any workload on demand.</p>
-        </div>
-        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🧠 Adaptive Interfaces</h3>
-          <p class="text-[#b2fff3]">Interfaces that learn and evolve with user preferences and behavior to deliver tailored interactions.</p>
-        </div>
-        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🌐 Crawler API</h3>
-          <p class="text-[#b2fff3]">Transforming websites into structured, prompt-ready knowledge blocks for AI to parse and use.</p>
-        </div>
-        <div class="bg-[#1a1a1a] rounded-3xl p-6 shadow-lg border border-[#00ffa0]/20 hover:scale-[1.02] hover:shadow-[#00ffa0]/30 transition duration-300">
-          <h3 class="text-xl font-semibold text-[#00ffd0] mb-2">🛰️ Deployment Engine</h3>
-          <p class="text-[#b2fff3]">Launch apps, models, and services in real time across our stack without overhead.</p>
+        <div style="margin-top:18px; display:flex; gap:10px; align-items:center">
+          <span class="badge">Private by Design</span>
+          <span class="badge">GPU‑Ready</span>
+          <span class="badge">Open API</span>
         </div>
       </div>
-    </section>
+      <div class="terminal tilt reveal" id="tilt">
+        <div class="term-top">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+        <div class="screen" aria-label="demo-terminal" id="terminal">
+          <div><span class="prompt">dz@core</span>:~$ <span id="typed"></span><span class="caret"></span></div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="text-sm text-[#00e0b0] mt-20 text-center pb-8 z-10 relative">
-      &copy; <span id="year"></span> DragonZpyder Industries. All rights reserved.
-    </footer>
+    <div class="container" style="margin-top:42px">
+      <div class="pillars" id="pillars">
+        <div class="card tilt reveal">
+          <div class="badge">AI Agents</div>
+          <h3>Goal‑driven</h3>
+          <p>Autonomous helpers that plan, use tools, and report back. Personal and fast.</p>
+        </div>
+        <div class="card tilt reveal">
+          <div class="badge">Smart OS</div>
+          <h3>Native Intelligence</h3>
+          <p>An operating layer that adapts to you — not the other way around.</p>
+        </div>
+        <div class="card tilt reveal">
+          <div class="badge">Cloud Compute</div>
+          <h3>Elastic & Sovereign</h3>
+          <p>Modular nodes that spin up on demand for any workload.</p>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
-  </body>
+  <!-- SHOWCASE / FEATURES -->
+  <section id="showcase">
+    <div class="container">
+      <h2 class="section-title reveal">Hints of what’s coming</h2>
+      <p class="section-sub reveal">Not everything is public yet. Here are a few pieces on the table.</p>
+      <div class="showcase">
+        <div class="tile big tilt reveal">
+          <h3>Crawler API</h3>
+          <p>Turns the web into structured, prompt‑ready knowledge blocks for agents.</p>
+          <div class="badge">Coming soon</div>
+        </div>
+        <div class="tile tilt reveal">
+          <h3>Adaptive Interfaces</h3>
+          <p>UIs that learn your rhythm and reshape themselves around your work.</p>
+          <div class="badge">In R&D</div>
+        </div>
+        <div class="tile tilt reveal">
+          <h3>Deployment Engine</h3>
+          <p>Launch apps, models, and services in real time across the stack.</p>
+          <div class="badge">Internal Beta</div>
+        </div>
+        <div class="tile tilt reveal">
+          <h3>Private Memory</h3>
+          <p>Encrypted, per‑persona memory that travels with you across tools.</p>
+          <div class="badge">Designing</div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px" class="logos reveal">
+        <div class="logo-pill">FastAPI</div>
+        <div class="logo-pill">PyTorch</div>
+        <div class="logo-pill">Kubernetes</div>
+        <div class="logo-pill">Postgres</div>
+        <div class="logo-pill">S3</div>
+        <div class="logo-pill">WebRTC</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATUS / TIERS -->
+  <section id="updates" style="padding-top:36px">
+    <div class="container">
+      <h2 class="section-title reveal">Status</h2>
+      <p class="section-sub reveal">We’re building in the open, slowly and deliberately.</p>
+      <div class="pillars" style="margin-top:8px">
+        <div class="card reveal">
+          <h3>Alpha</h3>
+          <p>Private access for collaborators and early partners.</p>
+          <div class="badge">Invite‑only</div>
+        </div>
+        <div class="card reveal">
+          <h3>Public Preview</h3>
+          <p>Docs, SDKs, and demos rolling out.</p>
+          <div class="badge">Soon</div>
+        </div>
+        <div class="card reveal">
+          <h3>Launch</h3>
+          <p>Production‑grade stack for teams and enterprises.</p>
+          <div class="badge">Coming</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT / CTA -->
+  <section id="get-started">
+    <div class="container">
+      <div class="card" style="padding:26px; display:grid; grid-template-columns:1.2fr .8fr; gap:18px; align-items:center">
+        <div>
+          <h2 class="section-title">Plug into DragonZpyder today</h2>
+          <p class="section-sub">Spin up your workspace in minutes. Ship something real before lunch.</p>
+          <form id="wl" style="display:flex; gap:10px; flex-wrap:wrap">
+            <input id="email" required placeholder="Work email" type="email" style="flex:1 1 260px; border-radius:14px; border:1px solid var(--border); padding:12px 14px; background:#08120e; color:var(--text); outline:none" />
+            <button class="btn primary" type="submit">Join the Waitlist</button>
+          </form>
+          <div id="thanks" style="display:none; margin-top:10px; color:#b8f0cf">Thanks! We’ll reach out shortly.</div>
+        </div>
+        <div class="terminal reveal">
+          <div class="term-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="screen">
+            <div># Deploy with a single command</div>
+            <div>$ curl -L https://get.dragonzpyder.sh | bash</div>
+            <div># or use docker compose</div>
+            <div>$ docker compose up -d dz-core nay-cloud</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="container foot">
+      <div class="logo" style="gap:10px">
+        <img src="logo.png" alt="DragonZpyder mark" style="width:28px;height:28px;border-radius:9px; box-shadow:0 0 16px rgba(0,255,133,.35)">
+        <strong>DragonZpyder Industries</strong>
+      </div>
+      <small>© <span id="year"></span> DragonZpyder Inc. Developed &amp; maintained by DragonZpyder Inc.</small>
+      <div style="display:flex; gap:12px">
+        <a class="btn" href="#top">Back to top</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+      const id = a.getAttribute('href');
+      const el = document.querySelector(id);
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
+    }));
+
+    // Intersection-based reveals
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+    },{ threshold:.15 });
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    // Tilt effect (subtle 3D)
+    const tilts = document.querySelectorAll('.tilt');
+    tilts.forEach(el=>{
+      el.addEventListener('mousemove', (e)=>{
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - .5;
+        const py = (e.clientY - r.top) / r.height - .5;
+        el.style.setProperty('--ry', (px*6)+'deg');
+        el.style.setProperty('--rx', (-py*6)+'deg');
+      });
+      el.addEventListener('mouseleave', ()=>{
+        el.style.setProperty('--ry','0deg');
+        el.style.setProperty('--rx','0deg');
+      });
+    });
+
+    // Typewriter for hero terminal
+    const lines = [
+      'npx create-dragonzpyder',
+      '✔ Provisioning sovereign runtime…',
+      '✔ Wiring neon‑mesh (latency < 20ms)…',
+      '✔ Loading reasoning cortex…',
+      '✔ Agents online: dz:core, nay:cloud, school:intel',
+      '→ Ship day one. Scale to universe.'
+    ];
+    const target = document.getElementById('typed');
+    let li = 0, ci = 0;
+    function type(){
+      if(li >= lines.length){ return; }
+      const text = lines[li];
+      if(ci <= text.length){
+        target.textContent = text.slice(0, ci++);
+        setTimeout(type, 22);
+      } else {
+        target.insertAdjacentHTML('beforebegin', `<div>${target.textContent}</div>`);
+        target.textContent = '';
+        ci = 0; li++;
+        setTimeout(type, 420);
+      }
+    }
+    type();
+
+    // Waitlist (stores locally so refresh keeps the thank-you)
+    const form = document.getElementById('wl');
+    const email = document.getElementById('email');
+    const thanks = document.getElementById('thanks');
+    if(localStorage.getItem('dz_waitlist')){ thanks.style.display='block'; }
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if(email.checkValidity()){
+        localStorage.setItem('dz_waitlist', email.value);
+        thanks.style.display='block';
+        email.value='';
+      }
+    });
+  </script>
+</body>
 </html>
