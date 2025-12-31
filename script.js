@@ -173,9 +173,13 @@ const input = document.getElementById("input");
 
 
 
+        
+
         function scrollDown() {
             const main = document.querySelector('main');
-            main.scrollTop = main.scrollHeight;
+            requestAnimationFrame(() => {
+                main.scrollTop = main.scrollHeight;
+            });
         }
 
         async function send(message) {
