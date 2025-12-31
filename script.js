@@ -223,7 +223,7 @@ const input = document.getElementById("input");
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        model: "dragonzpyder-core",
+                        model: "openai/gpt-oss-20b",
                         messages: [
                             { role: "system", content: SYSTEM_PROMPT },
                             { role: "user", content: message }
