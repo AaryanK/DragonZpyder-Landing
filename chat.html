@@ -2,301 +2,286 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DragonZpyder | Core Terminal</title>
-  <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DragonZpyder</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-deep: #020202;
-            --neon-green: #39FF14;
-            --neon-cyan: #00F2FF;
-            --neon-magenta: #FF00E5;
-            --terminal-gray: #a0a0a0;
-            --border-glow: rgba(57, 255, 20, 0.3);
-            --glass: rgba(10, 10, 12, 0.85);
+            --bg-deep: #000000;
+            --glass-panel: rgba(28, 28, 30, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #F5F5F7;
+            --text-secondary: #86868B;
+            --accent-glow: rgba(0, 255, 133, 0.4); /* Dragon Green, but diffuse */
+            --accent-solid: #00FF85;
+            --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --ease-apple: cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'JetBrains Mono', monospace;
             background-color: var(--bg-deep);
-            color: white;
+            color: var(--text-primary);
+            font-family: var(--font-stack);
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow: hidden;
-            position: relative;
-        }
-
-        /* Animated Plasma Background */
-        .plasma-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            filter: blur(80px);
-            opacity: 0.4;
-        }
-        .blob {
-            position: absolute;
-            width: 40vw;
-            height: 40vw;
-            border-radius: 50%;
-            animation: drift 20s infinite alternate;
-        }
-        .blob.one { background: var(--neon-green); top: -10%; left: -10%; }
-        .blob.two { background: var(--neon-cyan); bottom: -10%; right: -10%; animation-delay: -5s; }
-
-        @keyframes drift {
-            from { transform: translate(0, 0) scale(1); }
-            to { transform: translate(100px, 50px) scale(1.1); }
-        }
-
-        /* Scanline Overlay */
-        body::after {
-            content: " ";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 3px, 3px 100%;
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        /* Main Animated Container */
-        .container {
-            position: relative;
-            width: 95vw;
-            max-width: 1000px;
-            height: 85vh;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border-radius: 4px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+            position: relative;
         }
 
-        .neon-border {
+        /* --- THE "LIVING" BACKGROUND --- */
+        .aurora-bg {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border: 1px solid transparent;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(20, 20, 25, 1) 0%, #000 100%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 133, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(0, 224, 255, 0.05) 0%, transparent 40%);
+            z-index: -1;
+            filter: blur(60px);
+            animation: breathe 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
             pointer-events: none;
-            border-radius: inherit;
-            background: linear-gradient(90deg, transparent, var(--neon-green), transparent) border-box;
-            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: destination-out;
-            mask-composite: exclude;
-            background-size: 200% 100%;
-            animation: borderMove 4s linear infinite;
-            opacity: 0.8;
         }
 
-        @keyframes borderMove {
-            0% { background-position: 200% 0%; }
-            100% { background-position: -200% 0%; }
-        }
-
-        .header {
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(57, 255, 20, 0.15);
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .sigil {
-            font-size: 24px;
-            filter: drop-shadow(0 0 8px var(--neon-green));
-            animation: flicker 4s infinite;
-        }
-
-        .title {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            letter-spacing: 6px;
-            color: var(--neon-green);
-            text-shadow: 0 0 10px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.2);
-        }
-
-        .status {
-            font-size: 11px;
-            color: var(--neon-cyan);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .brand-pill {
+            background: rgba(20, 20, 20, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.05);
             display: flex;
             align-items: center;
             gap: 8px;
+            opacity: 0;
+            animation: fadeIn 1s 1s forwards;
         }
 
-        .status::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--neon-cyan);
-            animation: pulse 2s infinite;
+        .brand-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: -0.01em;
         }
 
-        .output {
+        /* --- CHAT AREA --- */
+        main {
             flex: 1;
-            padding: 30px;
             overflow-y: auto;
-            scroll-behavior: smooth;
+            padding: 6rem 0 8rem 0;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 2rem;
+            scroll-behavior: smooth;
         }
 
-        .msg-block {
-            max-width: 85%;
-            animation: slideIn 0.3s ease-out;
+        #output {
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .message {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s var(--ease-apple) forwards;
+            line-height: 1.6;
         }
 
-        .label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .system .label { color: var(--terminal-gray); }
-        .user .label { color: var(--neon-cyan); }
-        .ai .label { color: var(--neon-green); }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
         .content {
-            font-size: 15px;
-            line-height: 1.6;
-            word-wrap: break-word;
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: var(--text-primary);
+            white-space: pre-wrap;
         }
 
-        .ai .content {
-            color: #fff;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-        }
-
+        /* User Bubble */
         .user .content {
-            color: var(--neon-cyan);
-            background: rgba(0, 242, 255, 0.05);
-            padding: 10px 15px;
-            border-left: 1px solid var(--neon-cyan);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 20px 20px 4px 20px;
+            display: inline-block;
+            float: right;
+            backdrop-filter: blur(10px);
+        }
+        
+        .user { text-align: right; }
+
+        /* AI Bubble */
+        .ai .content {
+            text-align: left;
+            color: #EAEAEA;
+            transition: text-shadow 0.5s ease;
         }
 
-        .thinking {
-            color: var(--terminal-gray);
-            font-size: 13px;
-            font-style: italic;
-            animation: thinkingPulse 1.5s infinite;
+        /* --- STREAMING GLOW EFFECT --- */
+        .ai .content.streaming {
+            text-shadow: 0 0 8px rgba(0, 255, 133, 0.5), 0 0 16px rgba(0, 255, 133, 0.2);
         }
 
-        @keyframes thinkingPulse {
-            0%, 100% { opacity: 0.4; text-shadow: 0 0 0px var(--neon-green); }
-            50% { opacity: 1; text-shadow: 0 0 10px var(--neon-green); }
+        /* --- INPUT BAR --- */
+        .input-region {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 1.5rem 2rem 1.5rem;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(to top, var(--bg-deep) 20%, transparent);
+            z-index: 100;
         }
 
-        .input-zone {
-            padding: 25px 30px;
-            background: rgba(0, 0, 0, 0.4);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        .glass-capsule {
+            width: 100%;
+            max-width: 680px;
+            background: var(--glass-panel);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 6px;
             display: flex;
             align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            transition: all 0.4s var(--ease-apple);
+            position: relative;
+            overflow: hidden;
         }
 
-        .prompt-symbol {
-            color: var(--neon-green);
-            font-weight: bold;
-            margin-right: 15px;
-            text-shadow: 0 0 8px var(--neon-green);
+        .glass-capsule::after {
+            content: "";
+            position: absolute;
+            inset: -50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass-capsule:focus-within {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .glass-capsule:focus-within::after {
+            opacity: 0.3;
         }
 
         input {
             flex: 1;
             background: transparent;
             border: none;
-            outline: none;
-            color: white;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            letter-spacing: 1px;
+            color: #fff;
+            font-family: var(--font-stack);
+            font-size: 1rem;
+            padding: 12px 16px;
+            font-weight: 400;
         }
 
-        input::placeholder { color: #333; }
+        input::placeholder { color: rgba(255,255,255,0.3); font-weight: 300; }
 
-        @keyframes flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
-            20%, 24%, 55% { opacity: 0.7; }
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #fff;
+            margin-right: 4px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.5; }
+        .send-btn:hover {
+            background: var(--accent-solid);
+            color: #000;
         }
 
-        .output::-webkit-scrollbar { width: 4px; }
-        .output::-webkit-scrollbar-track { background: transparent; }
-        .output::-webkit-scrollbar-thumb { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+        .send-icon { width: 14px; height: 14px; fill: currentColor; }
+
+        /* --- TYPING INDICATOR --- */
+        .thinking-dot {
+            width: 8px; height: 8px;
+            background: var(--accent-solid);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-solid);
+            animation: pulse 1.5s ease-in-out infinite;
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.3; transform: scale(0.8); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-
 <body>
 
-    <div class="plasma-bg">
-        <div class="blob one"></div>
-        <div class="blob two"></div>
-    </div>
+    <div class="aurora-bg"></div>
 
-    <div class="container">
-        <div class="neon-border"></div>
-
-        <div class="header">
-            <div class="brand">
-                <span class="sigil"><img src="logo.png" alt="DragonZpyder mark" style="width:28px;height:28px;border-radius:9px; box-shadow:0 0 16px rgba(0,255,133,.35)"></span>
-                <span class="title">DRAGONZPYDER</span>
-            </div>
-            <div class="status">Sovereign Node v2.5 // Active</div>
+    <header>
+        <div class="brand-pill">
+            <span style="color: var(--accent-solid);">●</span>
+            <span class="brand-text">DragonZpyder</span>
         </div>
+    </header>
 
-        <div id="output" class="output">
-            <div class="msg-block system">
-                <span class="label">System Core</span>
-                <div class="content">Sovereign intelligence layer successfully bridged. Awaiting high-level command from user...</div>
+    <main>
+        <div id="output">
+            <div class="message ai">
+                <div class="content">DragonZpyder is ready.</div>
             </div>
         </div>
+    </main>
 
-        <div class="input-zone">
-            <span class="prompt-symbol">DZ_ROOT_❯</span>
-            <input id="input" type="text" placeholder="Invoke consciousness..." autofocus autocomplete="off" />
+    <div class="input-region">
+        <div class="glass-capsule">
+            <input id="input" type="text" placeholder="Ask anything..." autocomplete="off">
+            <button class="send-btn" id="send-btn">
+                <svg class="send-icon" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                </svg>
+            </button>
         </div>
     </div>
-
 
     <script src="script.js"></script>
 </body>
-</html>>
+</html>

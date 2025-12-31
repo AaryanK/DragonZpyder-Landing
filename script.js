@@ -1,7 +1,3 @@
-const input = document.getElementById("input");
-const output = document.getElementById("output");
-
-const endpoint = "https://qbf3vu1p9exu8c-8000.proxy.runpod.net/v1/chat/completions";
 
 const SYSTEM_PROMPT = `
 SYSTEM PROMPT (USE VERBATIM)
@@ -190,102 +186,116 @@ Clarity is strength. Helpfulness is non-optional.
 END SYSTEM PROMPT
 `.trim();
 
-function scrollDown() {
-    output.scrollTop = output.scrollHeight;
-}
 
-async function send(message) {
-    // User block
-    const userBlock = document.createElement("div");
-    userBlock.className = "msg-block user";
-    userBlock.innerHTML = `
-        <span class="label">Administrator</span>
-        <div class="content">${message}</div>
-    `;
-    output.appendChild(userBlock);
-    scrollDown();
 
-    // AI placeholder
-    const aiBlock = document.createElement("div");
-    aiBlock.className = "msg-block ai";
-    aiBlock.innerHTML = `
-        <span class="label">DragonZpyder</span>
-        <div class="thinking">Synthesizing neural pathways...</div>
-    `;
-    output.appendChild(aiBlock);
-    scrollDown();
 
-    try {
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                model: "dragonzpyder-core",
-                messages: [
-                    { role: "system", content: SYSTEM_PROMPT },
-                    { role: "user", content: message }
-                ],
-                stream: true
-            })
-        });
+const input = document.getElementById("input");
+        const output = document.getElementById("output");
+        const sendBtn = document.getElementById("send-btn");
+        
+        const endpoint = "https://dldczbe8n283fl-8000.proxy.runpod.net/v1/chat/completions";
 
-        if (!response.ok) {
-            throw new Error("Signal decayed");
+
+
+        function scrollDown() {
+            const main = document.querySelector('main');
+            main.scrollTop = main.scrollHeight;
         }
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+        async function send(message) {
+            // User Message
+            const userEntry = document.createElement("div");
+            userEntry.className = "message user";
+            userEntry.innerHTML = `<div class="content">${message}</div>`;
+            output.appendChild(userEntry);
+            scrollDown();
 
-        // Replace thinking indicator
-        aiBlock.querySelector(".thinking").remove();
-        const contentDiv = document.createElement("div");
-        contentDiv.className = "content";
-        aiBlock.appendChild(contentDiv);
+            // AI Placeholder
+            const aiEntry = document.createElement("div");
+            aiEntry.className = "message ai";
+            aiEntry.innerHTML = `<div class="content"><div class="thinking-dot"></div></div>`;
+            output.appendChild(aiEntry);
+            const contentBox = aiEntry.querySelector('.content');
+            scrollDown();
 
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
+            try {
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        model: "dragonzpyder-core",
+                        messages: [
+                            { role: "system", content: SYSTEM_PROMPT },
+                            { role: "user", content: message }
+                        ],
+                        stream: true
+                    })
+                });
 
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split("\n");
-
-            for (const line of lines) {
-                if (!line.startsWith("data: ")) continue;
-
-                const dataStr = line.slice(6).trim();
-                if (dataStr === "[DONE]") return;
-
-                try {
-                    const json = JSON.parse(dataStr);
-                    const text = json.choices?.[0]?.delta?.content || "";
-                    contentDiv.textContent += text;
-                    scrollDown();
-                } catch {
-                    // ignore malformed chunks
+                if (!response.ok) {
+                    throw new Error(`API Status: ${response.status}`);
                 }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                // Clear loading dot and add glowing class
+                contentBox.innerHTML = "";
+                contentBox.classList.add('streaming');
+
+                let buffer = ""; // Buffer for handling split chunks
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    // Decode and add to buffer
+                    buffer += decoder.decode(value, { stream: true });
+                    
+                    // Split by newlines
+                    const lines = buffer.split("\n");
+                    
+                    // Keep the last partial line in buffer
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (trimmed.startsWith("data: ")) {
+                            const dataStr = trimmed.slice(6);
+                            if (dataStr === "[DONE]") break;
+
+                            try {
+                                const json = JSON.parse(dataStr);
+                                const text = json.choices[0]?.delta?.content || "";
+                                contentBox.textContent += text;
+                                scrollDown();
+                            } catch (e) {
+                                // Skip invalid JSON chunks
+                            }
+                        }
+                    }
+                }
+                
+                // Remove glowing class when done
+                contentBox.classList.remove('streaming');
+
+            } catch (err) {
+                console.error(err);
+                contentBox.classList.remove('streaming');
+                contentBox.innerHTML = `<span style='color:#FF3B30'>Connection Failed: ${err.message}</span>`;
             }
         }
 
-    } catch (err) {
-        console.error(err);
-
-        if (aiBlock.querySelector(".thinking")) {
-            aiBlock.querySelector(".thinking").remove();
+        function handleInput() {
+            const val = input.value.trim();
+            if (val) {
+                send(val);
+                input.value = "";
+            }
         }
 
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "content";
-        errorDiv.style.color = "var(--neon-magenta)";
-        errorDiv.textContent =
-            "[CONNECTION TERMINATED: SIGNAL DECAY DETECTED]";
-        aiBlock.appendChild(errorDiv);
-        scrollDown();
-    }
-}
+        input.addEventListener("keydown", e => {
+            if (e.key === "Enter") handleInput();
+        });
 
-input.addEventListener("keydown", e => {
-    if (e.key === "Enter" && input.value.trim()) {
-        send(input.value.trim());
-        input.value = "";
-    }
-});
+        sendBtn.addEventListener("click", handleInput);
