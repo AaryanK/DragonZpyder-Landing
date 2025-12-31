@@ -46,9 +46,10 @@
                 radial-gradient(900px 480px at 10% 0%, rgba(228,255,87,.08), transparent 50%),
                 linear-gradient(180deg, #050806, var(--bg-2) 60%, #050806);
 
+            /* Dynamic Height for Mobile Browsers */
             height: 100vh;
-            /* Mobile Safari fix */
-            height: -webkit-fill-available; 
+            height: 100dvh; 
+            
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -88,7 +89,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            z-index: 20;
             pointer-events: none;
         }
 
@@ -125,18 +126,20 @@
         /* --- CHAT AREA --- */
         main {
             flex: 1;
-            /* CRITICAL SCROLLING FIXES: */
-            min-height: 0; 
+            /* CRITICAL SCROLLING FIXES */
+            min-height: 0;
             overflow-y: auto;
-            overflow-anchor: none; /* Prevents jittery scrolling */
+            -webkit-overflow-scrolling: touch;
             
-            /* Dynamic padding to account for header/footer */
-            padding: 6rem 0 calc(6rem + env(safe-area-inset-bottom));
+            /* Padding for header and input bar */
+            padding-top: 6rem;
+            padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+            
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            -webkit-overflow-scrolling: touch;
-            z-index: 1;
+            z-index: 10; /* Ensure it is above background but below inputs */
+            position: relative;
         }
 
         #output {
@@ -149,7 +152,7 @@
             gap: 2rem;
         }
 
-        /* Invisible anchor to ensure scrolling hits bottom */
+        /* Scroll Anchor: Ensures we have a target to scroll to */
         #scroll-anchor {
             height: 1px;
             width: 100%;
@@ -170,7 +173,8 @@
             font-size: 1.05rem;
             font-weight: 400;
             color: var(--text);
-            white-space: pre-wrap;
+            white-space: normal; /* Fix for ugly gaps */
+            word-wrap: break-word;
             position: relative;
         }
         
@@ -179,25 +183,33 @@
             font-family: "Space Grotesk", sans-serif;
             font-weight: 700;
             font-size: 1.15rem;
-            margin-top: 1rem;
+            margin-top: 1.25rem;
             margin-bottom: 0.5rem;
             color: var(--accent1);
             letter-spacing: 0.02em;
-        }
-        
-        .content ul {
-            margin: 0.5rem 0;
-            padding-left: 1.2rem;
-            list-style-type: disc;
-        }
-        
-        .content li {
-            margin-bottom: 0.25rem;
+            line-height: 1.3;
         }
         
         .content strong {
             color: var(--accent2);
             font-weight: 600;
+        }
+
+        .content p {
+            margin-bottom: 0.75rem; /* Natural paragraph spacing */
+        }
+
+        .content .list-item {
+            padding-left: 1.2rem;
+            position: relative;
+            margin-bottom: 0.25rem;
+        }
+        .content .list-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent1);
+            font-weight: bold;
         }
 
         /* User Bubble */
@@ -243,7 +255,7 @@
             padding: 0 1.5rem max(1.5rem, env(safe-area-inset-bottom)) 1.5rem;
             display: flex;
             justify-content: center;
-            background: linear-gradient(to top, #050806 10%, rgba(5,8,6,0.8) 50%, transparent 100%);
+            background: linear-gradient(to top, #050806 20%, rgba(5,8,6,0.8) 60%, transparent 100%);
             z-index: 100;
             pointer-events: none;
         }
@@ -344,6 +356,7 @@
         @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.4; transform: scale(0.8); } }
         @keyframes fadeIn { to { opacity: 1; } }
 
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0, 255, 133, 0.2); border-radius: 3px; }
@@ -398,6 +411,7 @@
         const output = document.getElementById("output");
         const sendBtn = document.getElementById("send-btn");
         const scrollAnchor = document.getElementById("scroll-anchor");
+        const main = document.querySelector('main');
         
         const endpoint = "https://dldczbe8n283fl-8000.proxy.runpod.net/v1/chat/completions";
 
@@ -564,48 +578,70 @@ Clarity is strength. Helpfulness is mandatory.
 END SYSTEM PROMPT
 `.trim();
 
-        function scrollDown() {
-            const main = document.querySelector('main');
-            main.scrollTop = main.scrollHeight;
+        // SCROLL LOGIC: Detect if user is intentionally scrolling up
+        let isUserScrolling = false;
+        
+        // Use 'wheel' and 'touchmove' to robustly detect manual scrolling
+        main.addEventListener('wheel', () => { isUserScrolling = true; });
+        main.addEventListener('touchmove', () => { isUserScrolling = true; });
+
+        function scrollToBottom() {
+            // Scroll to the anchor for reliable positioning
             scrollAnchor.scrollIntoView({ block: "end", behavior: "auto" });
         }
 
-        window.addEventListener('resize', scrollDown);
+        // Helper function for auto-scroll that respects user intent
+        function attemptAutoScroll() {
+            if (!isUserScrolling) {
+                scrollToBottom();
+            }
+        }
 
-        // Simple Markdown Parser
+        // Reset scroll lock when window resizes or new message is sent
+        window.addEventListener('resize', () => {
+            isUserScrolling = false;
+            scrollToBottom();
+        });
+
+        // Optimized Markdown Parser
         function parseMarkdown(text) {
-            // Headers: **Header** -> <h3>Header</h3>
-            // We use a regex that looks for **text** at the start of a line or after a newline
-            // Note: This is a simplified parser for real-time streaming
-            let formatted = text
-                // Headers: **Title**
-                .replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>')
-                // Bold: *Title* (Alternative header style requested) or just bold
-                // Prioritize the double asterisk header first, then single for bold if needed, 
-                // but user asked for points to be points and ** to be headers.
-                
-                // Bullet points: - point or * point
-                .replace(/^[-*]\s+(.*)$/gm, '<ul><li>$1</li></ul>')
-                
-                // Fix nested ULs (naive approach for simple lists)
-                .replace(/<\/ul>\s*<ul>/g, ''); 
-                
+            let formatted = text;
+
+            // 1. Headers: **Header** -> <h3>Header</h3>
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>');
+            
+            // 2. Bold: *Text* -> <strong>Text</strong>
+            formatted = formatted.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+
+            // 3. Lists: - item or * item -> custom styled div
+            formatted = formatted.replace(/^\s*[-*]\s+(.*)$/gm, '<div class="list-item">$1</div>');
+            
+            // 4. Clean up excessive newlines by normalizing them
+            // Replace double newlines with paragraph spacing
+            formatted = formatted.replace(/\n\n/g, '<p></p>');
+            
+            // Replace single newlines with <br> only if not inside a list or after header
+            formatted = formatted.replace(/(?<!>)\n(?!<)/g, '<br>');
+            
             return formatted;
         }
 
         async function send(message) {
+            // Unlock scrolling for new message
+            isUserScrolling = false;
+            
             const userEntry = document.createElement("div");
             userEntry.className = "message user";
             userEntry.innerHTML = `<div class="content">${message}</div>`;
             output.insertBefore(userEntry, scrollAnchor);
-            scrollDown();
+            scrollToBottom();
 
             const aiEntry = document.createElement("div");
             aiEntry.className = "message ai";
             aiEntry.innerHTML = `<div class="content"><div class="thinking-dot"></div></div>`;
             output.insertBefore(aiEntry, scrollAnchor);
             const contentBox = aiEntry.querySelector('.content');
-            scrollDown();
+            scrollToBottom();
 
             try {
                 const response = await fetch(endpoint, {
@@ -616,7 +652,7 @@ END SYSTEM PROMPT
                     },
                     mode: 'cors',
                     body: JSON.stringify({
-                        model: "openai/gpt-oss-20b", 
+                        model: "openai/gpt-oss-20b", // Kept generic
                         messages: [
                             { role: "system", content: SYSTEM_PROMPT },
                             { role: "user", content: message }
@@ -657,10 +693,8 @@ END SYSTEM PROMPT
                                 const delta = json.choices[0]?.delta?.content || "";
                                 rawText += delta;
                                 
-                                // Apply simple formatting on the fly
                                 contentBox.innerHTML = parseMarkdown(rawText);
-                                
-                                scrollDown();
+                                attemptAutoScroll();
                             } catch (e) { }
                         }
                     }
