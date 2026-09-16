@@ -1,0 +1,49 @@
+name: Frontend validation
+
+on:
+  pull_request:
+    paths:
+      - "index.html"
+      - "app.html"
+      - "app.css"
+      - "app.js"
+      - "home.js"
+      - "chat.html"
+      - "script.js"
+      - "api/**"
+      - ".github/workflows/frontend.yml"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check home.js
+          node --check script.js
+          node --check 'api/[...path].js'
+      - name: Guard the governed frontend boundary
+        run: |
+          ! grep -RniE 'proxy\.runpod\.net|Bearer EMPTY|/v1/chat/completions' -- \
+            index.html app.html app.js home.js chat.html script.js api
+          grep -q '/api/personal-tools/client/submit' app.js
+          grep -q '/api/personal-agent/chat' app.js
+          grep -q '/api/auth/personal-scope' app.js
+          grep -q '/api/personal-tools/approvals' app.js
+      - name: Check required frontend files
+        run: |
+          test -s index.html
+          test -s app.html
+          test -s app.css
+          test -s app.js
+          test -s 'api/[...path].js'
